@@ -14,7 +14,7 @@
             android:layout_height="50dp"
             android:layout_centerInParent="true"
             android:tint="#FFFFFF"
-            android:background="@drawable/error" />
+            android:background="@drawable/happy" />
 
     </RelativeLayout>
 
@@ -25,22 +25,37 @@
         android:padding="16dp">
 
         <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Your plant is healthy"
+            android:textAlignment="center"
+            android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
+        <TextView
+            android:visibility="gone"
             android:id="@+id/disease"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Success"
+            android:text="Your plant is healthy"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Headline" />
-
         <TextView
             android:layout_margin="10dp"
             android:id="@+id/description"
+            android:visibility="gone"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             android:text="To see the causes and treatments required for early blight"
             android:textAlignment="center"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+        <ImageView
+            android:layout_gravity="center"
+            android:id="@+id/descriptionImage"
+            android:layout_width="wrap_content"
+            android:layout_marginTop="20dp"
+            android:layout_height="80dp"
+            android:src="@drawable/leaves" />
+
         <RelativeLayout
             android:layout_margin="10dp"
             android:layout_width="match_parent"

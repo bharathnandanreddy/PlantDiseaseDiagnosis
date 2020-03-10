@@ -3,8 +3,8 @@ tomato early blight
 tomato late blight
 tomato leaf mold
 tomato septoria leaf spot
-tomato spider mites two spotted spider mite
+tomato spider mites
 tomato target spot
-tomato tomato yellow leaf curl virus
-tomato tomato mosaic virus
+tomato yellow leaf curl virus
+tomato mosaic virus
 tomato healthy

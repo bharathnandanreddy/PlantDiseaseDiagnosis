@@ -5,11 +5,19 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.graphics.Color
 import android.graphics.Matrix
 import android.graphics.drawable.BitmapDrawable
 import android.graphics.drawable.Drawable
+import android.net.Uri
 import android.os.Bundle
+import android.os.Handler
 import android.provider.MediaStore
+import android.text.SpannableString
+import android.text.Spanned
+import android.text.TextPaint
+import android.text.method.LinkMovementMethod
+import android.text.style.ClickableSpan
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +56,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         //Glide.with(this).load("http://192.168.0.8/").placeholder(R.drawable.ic_launcher_background).into(live)
         toolbar.title="Plant Disease Diagnosis"
+        splash.visibility=View.VISIBLE
+        main.visibility=View.INVISIBLE
+        Handler().postDelayed({
+            main.visibility=View.VISIBLE
+            splash.visibility=View.INVISIBLE
+        }, 2000)
+
+        Log.e("loading","true...")
+
         mClassifier = Classifier(assets, mModelPath, mLabelPath, mInputSize)
         live.settings.loadWithOverviewMode=true
         live. settings.useWideViewPort=true
@@ -55,6 +72,8 @@ class MainActivity : AppCompatActivity() {
         image.rotation=90F
         live.loadUrl("http://192.168.43.10")
         live.setInitialScale(1)
+
+
         addImg.setOnClickListener {
 
             showPictureDialog()
@@ -181,12 +200,12 @@ class MainActivity : AppCompatActivity() {
     private fun showPictureDialog() {
         val pictureDialog = AlertDialog.Builder(this)
         pictureDialog.setTitle("Select Action")
-        val pictureDialogItems = arrayOf("Select photo from gallery", "Capture photo from camera")
+        val pictureDialogItems = arrayOf("Choose from camera", "Choose from gallery")
         pictureDialog.setItems(pictureDialogItems
         ) { dialog, which ->
             when (which) {
-                0 -> choosePhotoFromGallary()
-                1 -> takePhotoFromCamera()
+                1 -> choosePhotoFromGallary()
+                0 -> takePhotoFromCamera()
             }
         }
         pictureDialog.show()
@@ -209,9 +228,37 @@ class MainActivity : AppCompatActivity() {
         var viewGroup = findViewById<ViewGroup>(android.R.id.content)
 
         //then we will inflate the custom alert dialog xml that we created
-        var dialogView = LayoutInflater.from(this).inflate(R.layout.alert_layout, viewGroup, false);
+        var dialogView = LayoutInflater.from(this).inflate(R.layout.alert_layout, viewGroup, false)
+        if(disease=="tomato healthy")
+         dialogView = LayoutInflater.from(this).inflate(R.layout.healthy_layout, viewGroup, false)
+
+
         dialogView.disease.setText(disease)
        dialogView.confidence.setText("%.2f".format(confidence).toString())
+
+
+
+
+        val text = "Click here to see the causes and treatments required for "+disease
+        val ss = SpannableString(text)
+        val clickableSpan1 = object: ClickableSpan() {
+            override  fun onClick(widget:View) {
+                var i =  Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(cure(disease)));
+                startActivity(i);
+            }
+           override fun updateDrawState(ds: TextPaint) {
+                super.updateDrawState(ds)
+                ds.setColor(Color.parseColor("#077367"))
+                ds.setUnderlineText(true)
+            }
+        }
+
+        ss.setSpan(clickableSpan1, 0,10 , Spanned.SPAN_EXCLUSIVE_EXCLUSIVE)
+        dialogView.description.setText(ss)
+        dialogView.description.setMovementMethod(LinkMovementMethod.getInstance())
+
+
 
         //Now we need an AlertDialog.Builder object
        var builder =  AlertDialog.Builder(this);
@@ -269,6 +316,22 @@ alertDialog.hide()
                 Log.e("result", results?.title + "\n Confidence:" + results?.confidence)
             }
         }
+    }
+
+    private  fun cure( disease: String):String{
+       return when{
+            disease.equals("tomato bacterial spot")->return "https://tomatodiseasehelp.com/bacterial-spots"
+           disease.equals("tomato early blight")->return "https://tomatodiseasehelp.com/early-blight"
+           disease.equals("tomato late blight")->return "https://tomatodiseasehelp.com/late-blight-treatments"
+           disease.equals("tomato leaf mold")->return "https://tomatodiseasehelp.com/leaf-mold"
+           disease.equals("tomato septoria leaf spot")->return "https://tomatodiseasehelp.com/septoria-leaf-spot"
+           disease.equals("tomato spider mites")->return "https://www.planetnatural.com/pest-problem-solver/houseplant-pests/spider-mite-control/"
+           disease.equals("tomato target spot")->return "http://www.pestnet.org/fact_sheets/tomato_target_spot_163.htm"
+           disease.equals("tomato yellow leaf curl virus")->return "https://ipm.ifas.ufl.edu/Agricultural_IPM/tylcv_home_mgmt.shtml"
+           disease.equals("tomato mosaic virus")->return "https://tomatodiseasehelp.com/mosaic-virus"
+           else ->return ""
+        }
+
     }
 
 
